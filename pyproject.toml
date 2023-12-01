@@ -16,8 +16,17 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "pudb",
+  "bpython",
   "mypy",
   "ruff",
   "black",
   "isort",
 ]
+
+[tool.isort]
+known_first_party = ["aoc"]
+skip_gitignore = true
+
+[tool.mypy]
+strict = true
