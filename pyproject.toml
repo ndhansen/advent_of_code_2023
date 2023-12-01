@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aoc"
+version = "1.0.0"
+authors = [
+  { name="Nicholas Hansen", email="ndhansen@leskat.net" },
+]
+description = "Advent of Code 2023"
+requires-python = ">=3.11"
+dependencies = [
+  "parse"
+]
+
+[project.optional-dependencies]
+dev = [
+  "mypy",
+  "ruff",
+  "black",
+  "isort",
+]
