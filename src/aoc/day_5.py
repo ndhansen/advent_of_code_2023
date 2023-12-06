@@ -93,14 +93,3 @@ def part_2(puzzle: PuzzleInput) -> Any:
             if loc < smallest:
                 smallest = loc
     return smallest
-
-    # Attempt 2 - smarter brute force?
-    # smallest_seed = min(map(lambda x: x[0], seeds))
-    # largest_seed = max(map(lambda x: x[1], seeds))
-    # seed_map = precompute(smallest_seed, largest_seed, mappings)
-    # smallest = 1_000_000_000_000
-    # for seed_group in seeds:
-    #     for seed in range(seed_group[0], seed_group[1]):
-    #         if seed_map[seed] < smallest:
-    #             smallest = seed_map[seed]
-    # return smallest

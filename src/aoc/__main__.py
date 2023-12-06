@@ -1,7 +1,7 @@
 import argparse
 from importlib.resources import files
 
-from aoc import day_1, day_2, day_3, day_4, day_5, day_6
+from aoc import day_1, day_2, day_3, day_4, day_5, day_6, day_7
 from aoc.utils import contents
 
 parser = argparse.ArgumentParser(prog="AOC", description="Advent of Code")
@@ -36,6 +36,9 @@ match args.day:
     case "day_6":
         part_1 = day_6.part_1(puzzle)
         part_2 = day_6.part_2(puzzle)
+    case "day_7":
+        part_1 = day_7.part_1(puzzle)
+        part_2 = day_7.part_2(puzzle)
     case _:
         raise ValueError("Unknown day!")
 
