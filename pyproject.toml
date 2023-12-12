@@ -5,15 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "aoc"
 version = "1.0.0"
-authors = [
-  { name="Nicholas Hansen", email="ndhansen@leskat.net" },
-]
+authors = [{ name = "Nicholas Hansen", email = "ndhansen@leskat.net" }]
 description = "Advent of Code 2023"
 requires-python = ">=3.10"
-dependencies = [
-  "parse",
-  "tqdm"
-]
+dependencies = ["parse", "tqdm"]
 
 [project.optional-dependencies]
 dev = [
@@ -23,6 +18,8 @@ dev = [
   "ruff",
   "black",
   "isort",
+  "pytest",
+  "types-tqdm",
 ]
 
 [tool.isort]
@@ -33,7 +30,5 @@ skip_gitignore = true
 strict = true
 
 [[tool.mypy.overrides]]
-module = [
-    "parse",
-]
+module = ["parse", ""]
 ignore_missing_imports = true

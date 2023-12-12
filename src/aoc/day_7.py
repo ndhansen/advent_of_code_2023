@@ -135,9 +135,6 @@ def parse_line_2(line: str) -> tuple[Hand, int]:
 
 
 def part_2(puzzle: PuzzleInput) -> Any:
-    import pudb
-
-    pudb.set_trace()
     hands_unordered = list(map(parse_line_2, puzzle.lines))
     hands_ordered = sorted(hands_unordered, key=lambda x: x[0])
     total = 0

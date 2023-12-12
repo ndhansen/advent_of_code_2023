@@ -15,6 +15,7 @@ from aoc import (
     day_10,
     day_11,
     day_12,
+    day_13,
 )
 from aoc.utils import contents
 
@@ -81,6 +82,10 @@ match args.day:
         part_1 = day_12.part_1(puzzle)
         middle_time = timer()
         part_2 = day_12.part_2(puzzle)
+    case "day_13":
+        part_1 = day_13.part_1(puzzle)
+        middle_time = timer()
+        part_2 = day_13.part_2(puzzle)
     case _:
         raise ValueError("Unknown day!")
 

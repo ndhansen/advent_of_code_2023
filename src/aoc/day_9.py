@@ -49,9 +49,6 @@ def part_1(puzzle: PuzzleInput) -> Any:
 
 
 def part_2(puzzle: PuzzleInput) -> Any:
-    import pudb
-
-    pudb.set_trace()
     increases = list(map(parse_line, puzzle.lines))
     last_nums = list(map(predict_last, increases))
     return sum(last_nums)
