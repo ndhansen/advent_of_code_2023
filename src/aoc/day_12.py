@@ -15,10 +15,12 @@ def parse_input(puzzle: list[str], repeats: int = 1) -> list[Spring]:
     lines = []
     for row in puzzle:
         springs, raw_count = row.split(" ")
-        springs = (springs + "?") * repeats
-        springs = springs[:-1]
+        springs = "?".join([springs] * repeats)
+
+        # Basically worthless optimisations
         springs = springs.strip(".")
         springs = ".".join(x for x in springs.split(".") if len(x) > 0)
+
         count_nums_raw = raw_count.split(",")
         numbers = tuple(int(x) for x in count_nums_raw) * repeats
         lines.append(Spring(springs, numbers))
@@ -27,6 +29,9 @@ def parse_input(puzzle: list[str], repeats: int = 1) -> list[Spring]:
 
 @functools.lru_cache(maxsize=None)
 def placements(spring: Spring, next_must_work: bool) -> int:
+    if sum(spring.spring_count) > len(spring.placement):
+        # Significant optimisation
+        return 0
     if sum(spring.spring_count) == 0:
         if "#" in spring.placement:
             return 0
