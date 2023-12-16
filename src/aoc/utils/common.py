@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 from collections import defaultdict
+from enum import Enum, auto
 from typing import NamedTuple, Protocol, TypeVar
 import heapq
 
@@ -7,6 +8,16 @@ import heapq
 class Coord(NamedTuple):
     x: int
     y: int
+
+    def add(self, other: "Coord") -> "Coord":
+        return Coord(self.x + other.x, self.y + other.y)
+
+
+class Direction(Enum):
+    NORTH = Coord(0, -1)
+    SOUTH = Coord(0, 1)
+    EAST = Coord(1, 0)
+    WEST = Coord(-1, 0)
 
 
 T = TypeVar("T")
