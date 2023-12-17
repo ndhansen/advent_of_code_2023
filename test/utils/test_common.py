@@ -38,13 +38,13 @@ def test_a_star(
         width = abs(current.x - goal.x)
         return math.sqrt(height**2 + width**2)
 
-    def cost_func(last: Coord, current: Coord) -> float:
+    def cost_func(paths: dict[Coord, Coord], current: Coord, last: Coord) -> float:
         # We can assume they will be points right next to each other
-        height = abs(last.y - current.y)
-        width = abs(last.x - current.x)
+        height = abs(paths[current].y - current.y)
+        width = abs(paths[current].x - current.x)
         return math.sqrt(height**2 + width**2)
 
-    def neighbor(current: Coord) -> Iterator[Coord]:
+    def neighbor(current: Coord, paths: dict[Coord, Coord]) -> Iterator[Coord]:
         for x in range(-1, 2):
             for y in range(-1, 2):
                 if x == 0 and y == 0:

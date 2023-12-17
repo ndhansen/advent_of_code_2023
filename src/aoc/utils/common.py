@@ -29,12 +29,12 @@ class Heuristic(Protocol):
 
 
 class Cost(Protocol):
-    def __call__(self, last: T, current: T) -> float:
+    def __call__(self, paths: dict[T, T], current: T, last: T) -> float:
         ...
 
 
 class Neighbors(Protocol):
-    def __call__(self, current: T) -> Iterator[T]:
+    def __call__(self, current: T, paths: dict[T, T]) -> Iterator[T]:
         ...
 
 
@@ -62,12 +62,14 @@ def a_star(
             path = _reconstruct_path(paths, goal)
             return path, cheapest_path[current]
 
-        for neighbor in next_func(current):
-            new_cost = cheapest_path[current] + cost_func(current, neighbor)
+        for neighbor in next_func(current, paths):
+            new_cost = cheapest_path[current] + cost_func(paths, neighbor, current)
 
             if new_cost < cheapest_path[neighbor]:
                 paths[neighbor] = current
                 cheapest_path[neighbor] = new_cost
-                heapq.heappush(frontier, (heuristic(neighbor, goal), neighbor))
+                heapq.heappush(
+                    frontier, (new_cost + heuristic(neighbor, goal), neighbor)
+                )
 
     raise ValueError("Could not find a path.")
