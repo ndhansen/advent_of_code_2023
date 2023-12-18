@@ -1,5 +1,4 @@
 from collections import defaultdict
-from enum import Enum, IntEnum, auto
 import itertools
 from typing import Any, NamedTuple
 from aoc.utils.common import Coord, Direction
@@ -15,15 +14,9 @@ class Instruction(NamedTuple):
     color: str
 
 
-class Side(IntEnum):
-    INSIDE = auto()
-    OUTSIDE = auto()
-
-
 class Line(NamedTuple):
     start: Coord
     end: Coord
-    side: Side
 
 
 def parse_input(puzzle: str) -> Instruction:
@@ -71,7 +64,7 @@ def next_point(current: Coord, instruction: Instruction) -> Coord:
             x = instruction.distance
         case Direction.WEST:
             x = -instruction.distance
-    return Coord(current.x + x, current.y + y)
+    return Coord(current.x - x, current.y - y)
 
 
 def get_inside_perimiter(
@@ -143,66 +136,6 @@ def parse_input_2(line: str) -> Instruction:
     return Instruction(direction, distance, "")
 
 
-def get_lines(instructions: list[Instruction]) -> list[Line]:
-    lines = []
-    cur_x = 0
-    cur_y = 0
-    for offset, vertical in itertools.batched(instructions, 2):
-        match offset.direction:
-            case Direction.EAST:
-                new_x = cur_x + offset.distance
-                lines.append(
-                    Line(Coord(cur_x + 1, cur_y), Coord(cur_x + 1, cur_y), Side.INSIDE)
-                )
-                lines.append(
-                    Line(Coord(new_x, cur_y), Coord(new_x, cur_y), Side.INSIDE)
-                )
-            case Direction.WEST:
-                new_x = cur_x - offset.distance
-                lines.append(
-                    Line(Coord(cur_x - 1, cur_y), Coord(cur_x - 1, cur_y), Side.INSIDE)
-                )
-                lines.append(
-                    Line(Coord(new_x, cur_y), Coord(new_x, cur_y), Side.INSIDE)
-                )
-            case _:
-                raise ValueError()
-
-        new_y: int
-        match vertical.direction:
-            case Direction.NORTH:
-                new_y = cur_y - vertical.distance
-            case Direction.SOUTH:
-                new_y = cur_y + vertical.distance
-            case _:
-                raise ValueError()
-
-        side: Side
-        if offset.direction == Direction.EAST and vertical.direction == Direction.SOUTH:
-            side = Side.OUTSIDE
-        elif (
-            offset.direction == Direction.EAST and vertical.direction == Direction.NORTH
-        ):
-            side = Side.INSIDE
-        elif (
-            offset.direction == Direction.WEST and vertical.direction == Direction.SOUTH
-        ):
-            side = Side.OUTSIDE
-        elif (
-            offset.direction == Direction.WEST and vertical.direction == Direction.NORTH
-        ):
-            side = Side.INSIDE
-        else:
-            raise ValueError()
-
-        lines.append(Line(Coord(new_x, cur_y), Coord(new_x, new_y), side))
-
-        cur_y = new_y
-        cur_x = new_x
-
-    return lines
-
-
 def dist_between_points(last: Coord, current: Coord) -> int:
     if last.x == current.x:
         return abs(last.y - current.y)
@@ -211,35 +144,45 @@ def dist_between_points(last: Coord, current: Coord) -> int:
     raise ValueError()
 
 
-def get_crossing_points(y: int, lines: list[Line]) -> list[tuple[int, Side]]:
-    points: list[tuple[int, Side]] = []
+def get_crossing_points(y: int, lines: list[Line]) -> list[int]:
+    points = []
     for line in lines:
+        if y == line.start.y and y == line.end.y:
+            points.extend([line.start.x, line.end.x])
+            continue
         line_smallest = min(line.start.y, line.end.y)
         line_biggest = max(line.start.y, line.end.y)
-        if y >= line_smallest and y <= line_biggest:
-            points.append((line.start.x, line.side))
+        if y > line_smallest and y < line_biggest:
+            points.extend([line.start.x, line.start.x])
+    return sorted(points)
 
-    return sorted(points, key=lambda x: x[0])
 
-
-def interior_size(points: list[tuple[int, Side]]) -> int:
+def interior_size(points: list[int]) -> int:
     inside = 0
-    for first, second in itertools.pairwise(points):
-        if first[1] == Side.OUTSIDE and second[1] == Side.INSIDE:
+    for point_group in itertools.batched(points, 4):
+        assert len(point_group) % 2 == 0
+        if len(point_group) == 2:
+            inside += (point_group[1] - point_group[0]) + 1
             continue
-        elif first[1] == Side.INSIDE and second[1] == Side.INSIDE:
-            inside += second[0] - first[0]
-        elif first[1] == Side.OUTSIDE and second[1] == Side.OUTSIDE:
-            inside += second[0] - first[0]
-        elif first[1] == Side.INSIDE and second[1] == Side.OUTSIDE:
-            inside += (second[0] - first[0]) + 1
-        else:
-            raise ValueError()
+        inside += (point_group[3] - point_group[0]) + 1
+        # if len(point_group) != 4:
+        #     continue
+        # inside += (point_group[2] - point_group[1]) - 1
 
     return inside
 
 
-def interior_2(lines: list[Line]) -> int:
+def interior_2(instructions: list[Instruction]) -> int:
+    lines: list[Line] = []
+    last = Coord(0, 0)
+    perimiter_length = 0
+
+    for instruction in instructions:
+        next_coord = next_point(last, instruction)
+        lines.append(Line(last, next_coord))
+        perimiter_length += dist_between_points(last, next_coord)
+        last = next_coord
+
     largest_y, smallest_y = 0, 0
     for line in lines:
         line_smallest = min(line.start.y, line.end.y)
@@ -249,16 +192,18 @@ def interior_2(lines: list[Line]) -> int:
         if line_biggest > largest_y:
             largest_y = line_biggest
 
+    import pudb
+
+    pudb.set_trace()
     inside_size = 0
     for y in tqdm(range(smallest_y, largest_y + 1)):
         points = get_crossing_points(y, lines)
         inside_size += interior_size(points)
 
+    # return inside_size + perimiter_length
     return inside_size
 
 
 def part_2(puzzle: PuzzleInput) -> Any:
-    instructions = list(map(parse_input_2, puzzle.lines))
-    lines = get_lines(instructions)
-
-    return interior_2(lines)
+    instructions = list(map(parse_input, puzzle.lines))
+    return interior_2(instructions)
