@@ -136,6 +136,9 @@ class TreeCondition(NamedTuple):
             return TreeCondition(self.rating, "<", self.value + 1)
         raise ValueError()
 
+    def __str__(self) -> str:
+        return f"{self.rating}{self.direction}{self.value}"
+
 
 class Tail(Enum):
     ACCEPTED = "A"
@@ -192,14 +195,14 @@ def accepted_tree_conditions(tree: Tree) -> list[tuple[TreeCondition, ...]]:
         if branch.yes == Tail.ACCEPTED:
             accepted_conditions.append((*cur_conditions, branch.cond))
         elif branch.yes == Tail.REJECTED:
-            continue
+            pass
         else:
             frontier.append((branch.yes, (*cur_conditions, branch.cond)))
 
         if branch.no == Tail.ACCEPTED:
             accepted_conditions.append((*cur_conditions, branch.cond.flip()))
         elif branch.no == Tail.REJECTED:
-            continue
+            pass
         else:
             frontier.append((branch.no, (*cur_conditions, branch.cond.flip())))
 
@@ -219,7 +222,7 @@ def get_rating_range(
     upper_bound = tuple(c.value for c in conditions if c.direction == "<")
     biggest = 4000
     if len(upper_bound) > 0:
-        biggest = min(upper_bound)
+        biggest = min(upper_bound) - 1
 
     return smallest, biggest
 
