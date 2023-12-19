@@ -143,122 +143,57 @@ def parse_input_2(line: str) -> Instruction:
     return Instruction(direction, distance, "")
 
 
-def get_lines(instructions: list[Instruction]) -> list[Line]:
-    lines = []
-    cur_x = 0
-    cur_y = 0
-    for offset, vertical in itertools.batched(instructions, 2):
-        match offset.direction:
-            case Direction.EAST:
-                new_x = cur_x + offset.distance
-                lines.append(
-                    Line(Coord(cur_x + 1, cur_y), Coord(cur_x + 1, cur_y), Side.INSIDE)
-                )
-                lines.append(
-                    Line(Coord(new_x, cur_y), Coord(new_x, cur_y), Side.INSIDE)
-                )
-            case Direction.WEST:
-                new_x = cur_x - offset.distance
-                lines.append(
-                    Line(Coord(cur_x - 1, cur_y), Coord(cur_x - 1, cur_y), Side.INSIDE)
-                )
-                lines.append(
-                    Line(Coord(new_x, cur_y), Coord(new_x, cur_y), Side.INSIDE)
-                )
-            case _:
-                raise ValueError()
-
-        new_y: int
-        match vertical.direction:
+def coordinates_from_instructions(instructions: list[Instruction]) -> list[Coord]:
+    coords = [Coord(0, 0)]
+    for instruction in instructions:
+        x_diff, y_diff = 0, 0
+        match instruction.direction:
             case Direction.NORTH:
-                new_y = cur_y - vertical.distance
+                y_diff = -instruction.distance
             case Direction.SOUTH:
-                new_y = cur_y + vertical.distance
+                y_diff = instruction.distance
+            case Direction.WEST:
+                x_diff = -instruction.distance
+            case Direction.EAST:
+                x_diff = instruction.distance
             case _:
                 raise ValueError()
 
-        side: Side
-        if offset.direction == Direction.EAST and vertical.direction == Direction.SOUTH:
-            side = Side.OUTSIDE
-        elif (
-            offset.direction == Direction.EAST and vertical.direction == Direction.NORTH
-        ):
-            side = Side.INSIDE
-        elif (
-            offset.direction == Direction.WEST and vertical.direction == Direction.SOUTH
-        ):
-            side = Side.OUTSIDE
-        elif (
-            offset.direction == Direction.WEST and vertical.direction == Direction.NORTH
-        ):
-            side = Side.INSIDE
-        else:
-            raise ValueError()
+        x = coords[-1].x + x_diff
+        y = coords[-1].y + y_diff
+        coords.append(Coord(x, y))
 
-        lines.append(Line(Coord(new_x, cur_y), Coord(new_x, new_y), side))
-
-        cur_y = new_y
-        cur_x = new_x
-
-    return lines
+    assert coords[-1] == Coord(0, 0)
+    return coords
 
 
-def dist_between_points(last: Coord, current: Coord) -> int:
-    if last.x == current.x:
-        return abs(last.y - current.y)
-    if last.y == current.y:
-        return abs(last.x - current.x)
-    raise ValueError()
+def determinant(one: Coord, two: Coord) -> int:
+    return (one.x * two.y) - (one.y * two.x)
 
 
-def get_crossing_points(y: int, lines: list[Line]) -> list[tuple[int, Side]]:
-    points: list[tuple[int, Side]] = []
-    for line in lines:
-        line_smallest = min(line.start.y, line.end.y)
-        line_biggest = max(line.start.y, line.end.y)
-        if y >= line_smallest and y <= line_biggest:
-            points.append((line.start.x, line.side))
+def shoelace(coords: list[Coord]) -> int:
+    total = 0
+    for left, right in itertools.pairwise(coords):
+        total += determinant(left, right)
 
-    return sorted(points, key=lambda x: x[0])
+    return total
 
 
-def interior_size(points: list[tuple[int, Side]]) -> int:
-    inside = 0
-    for first, second in itertools.pairwise(points):
-        if first[1] == Side.OUTSIDE and second[1] == Side.INSIDE:
-            continue
-        elif first[1] == Side.INSIDE and second[1] == Side.INSIDE:
-            inside += second[0] - first[0]
-        elif first[1] == Side.OUTSIDE and second[1] == Side.OUTSIDE:
-            inside += second[0] - first[0]
-        elif first[1] == Side.INSIDE and second[1] == Side.OUTSIDE:
-            inside += (second[0] - first[0]) + 1
-        else:
-            raise ValueError()
-
-    return inside
+def perimiter(instructions: list[Instruction]) -> int:
+    return sum(instruction.distance for instruction in instructions)
 
 
-def interior_2(lines: list[Line]) -> int:
-    largest_y, smallest_y = 0, 0
-    for line in lines:
-        line_smallest = min(line.start.y, line.end.y)
-        line_biggest = max(line.start.y, line.end.y)
-        if line_smallest < smallest_y:
-            smallest_y = line_smallest
-        if line_biggest > largest_y:
-            largest_y = line_biggest
-
-    inside_size = 0
-    for y in tqdm(range(smallest_y, largest_y + 1)):
-        points = get_crossing_points(y, lines)
-        inside_size += interior_size(points)
-
-    return inside_size
+def part_1(puzzle: PuzzleInput) -> Any:
+    instructions = list(map(parse_input, puzzle.lines))
+    coordinates = coordinates_from_instructions(instructions)
+    interior_size = shoelace(coordinates) // 2
+    perimiter_size = perimiter(instructions)
+    return interior_size + (perimiter_size // 2) + 1
 
 
 def part_2(puzzle: PuzzleInput) -> Any:
     instructions = list(map(parse_input_2, puzzle.lines))
-    lines = get_lines(instructions)
-
-    return interior_2(lines)
+    coordinates = coordinates_from_instructions(instructions)
+    interior_size = shoelace(coordinates) // 2
+    perimiter_size = perimiter(instructions)
+    return interior_size + (perimiter_size // 2) + 1
