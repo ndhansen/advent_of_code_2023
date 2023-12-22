@@ -3,8 +3,6 @@ from typing import Any, NamedTuple
 
 from aoc.utils.contents import PuzzleInput
 
-from tqdm import tqdm
-
 
 class Spring(NamedTuple):
     placement: str

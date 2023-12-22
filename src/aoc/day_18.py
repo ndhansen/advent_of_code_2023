@@ -1,12 +1,9 @@
-from collections import defaultdict
-from enum import Enum, IntEnum, auto
 import itertools
+from enum import IntEnum, auto
 from typing import Any, NamedTuple
+
 from aoc.utils.common import Coord, Direction
-
 from aoc.utils.contents import PuzzleInput
-
-from tqdm import tqdm
 
 
 class Instruction(NamedTuple):
@@ -116,11 +113,6 @@ def interior(instructions: list[Instruction]) -> int:
         raise ValueError()
 
     return len(interior) + len(loop)
-
-
-def part_1(puzzle: PuzzleInput) -> Any:
-    instructions = list(map(parse_input, puzzle.lines))
-    return interior(instructions)
 
 
 def parse_input_2(line: str) -> Instruction:

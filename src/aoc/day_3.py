@@ -1,8 +1,8 @@
+import re
 from collections import defaultdict
 from typing import Any
-import re
-from aoc.utils.common import Coord
 
+from aoc.utils.common import Coord
 from aoc.utils.contents import PuzzleInput
 
 

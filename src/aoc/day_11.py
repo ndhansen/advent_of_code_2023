@@ -1,8 +1,8 @@
 from itertools import combinations
 from typing import Any, NamedTuple
 
-from aoc.utils.contents import PuzzleInput
 from aoc.utils.common import Coord
+from aoc.utils.contents import PuzzleInput
 
 
 class LongGalaxy(NamedTuple):

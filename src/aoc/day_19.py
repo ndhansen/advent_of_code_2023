@@ -1,8 +1,6 @@
-from collections.abc import Callable
-from enum import Enum
-from typing import Literal
 import re
-from typing import Any, NamedTuple
+from enum import Enum
+from typing import Any, Literal, NamedTuple
 
 from aoc.utils.contents import PuzzleInput
 

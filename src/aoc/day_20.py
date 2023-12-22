@@ -1,7 +1,7 @@
-from dataclasses import dataclass
 import math
-from typing import Any
+from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from aoc.utils.contents import PuzzleInput
 
@@ -44,11 +44,20 @@ def parse_line(line: str) -> Module:
     identifier, raw_outputs = line.split(" -> ")
     outputs = raw_outputs.strip().split(", ")
     if identifier[0] == "%":
-        return FlipFlop(name=identifier[1:], kind=ModuleType.FLIP_FLOP, outputs=tuple(outputs))
+        return FlipFlop(
+            name=identifier[1:], kind=ModuleType.FLIP_FLOP, outputs=tuple(outputs)
+        )
     elif identifier[0] == "&":
-        return Conjunction(name=identifier[1:], kind=ModuleType.FLIP_FLOP, outputs=tuple(outputs), memory={})
+        return Conjunction(
+            name=identifier[1:],
+            kind=ModuleType.FLIP_FLOP,
+            outputs=tuple(outputs),
+            memory={},
+        )
     else:
-        return Broadcast(name=identifier, kind=ModuleType.FLIP_FLOP, outputs=tuple(outputs))
+        return Broadcast(
+            name=identifier, kind=ModuleType.FLIP_FLOP, outputs=tuple(outputs)
+        )
 
 
 def parse_input(lines: list[str]) -> dict[str, Module]:
@@ -86,13 +95,13 @@ def push_button(modules: dict[str, Module]) -> tuple[int, int]:
                 frontier.append((False, module.name, output))
                 lows += 1
         elif isinstance(module, FlipFlop):
-            if signal == False:
-                if module.state == False:
+            if signal is False:
+                if module.state is False:
                     module.state = True
                     for output in module.outputs:
                         highs += 1
                         frontier.append((True, module.name, output))
-                elif module.state == True:
+                elif module.state is True:
                     module.state = False
                     for output in module.outputs:
                         lows += 1
@@ -128,12 +137,12 @@ def cycle(modules: dict[str, Module], observed: set[str]) -> set[str]:
             for output in module.outputs:
                 frontier.append((False, module.name, output))
         elif isinstance(module, FlipFlop):
-            if signal == False:
-                if module.state == False:
+            if signal is False:
+                if module.state is False:
                     module.state = True
                     for output in module.outputs:
                         frontier.append((True, module.name, output))
-                elif module.state == True:
+                elif module.state is True:
                     module.state = False
                     for output in module.outputs:
                         frontier.append((False, module.name, output))

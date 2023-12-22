@@ -1,8 +1,8 @@
-from typing import Any
 from enum import Enum, auto
+from typing import Any
 
-from aoc.utils.contents import PuzzleInput
 from aoc.utils.common import Coord, Direction
+from aoc.utils.contents import PuzzleInput
 
 
 class Mirror(Enum):

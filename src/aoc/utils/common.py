@@ -1,8 +1,8 @@
-from collections.abc import Iterator
-from collections import defaultdict
-from enum import Enum, auto
-from typing import NamedTuple, Protocol, TypeVar
 import heapq
+from collections import defaultdict
+from collections.abc import Iterator
+from enum import Enum
+from typing import NamedTuple, Protocol, TypeVar
 
 
 class Coord(NamedTuple):

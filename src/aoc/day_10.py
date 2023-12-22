@@ -1,7 +1,7 @@
 from typing import Any
 
-from aoc.utils.contents import PuzzleInput
 from aoc.utils.common import Coord
+from aoc.utils.contents import PuzzleInput
 
 
 def get_start(puzzle: list[str]) -> Coord:

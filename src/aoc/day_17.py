@@ -3,7 +3,6 @@ from enum import IntEnum, auto
 from typing import Any, NamedTuple
 
 from aoc.utils.common import a_star
-
 from aoc.utils.contents import PuzzleInput
 
 

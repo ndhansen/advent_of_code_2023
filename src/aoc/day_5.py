@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
-from parse import parse, findall
+from parse import findall, parse
 from tqdm import tqdm
 
 from aoc.utils.contents import PuzzleInput
