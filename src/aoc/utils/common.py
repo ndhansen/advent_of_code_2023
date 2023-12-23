@@ -38,12 +38,14 @@ class Neighbors(Protocol):
         ...
 
 
-def _reconstruct_path(paths: dict[T, T], goal: T) -> list[T]:
+def _reconstruct_path(paths: dict[T, T], start: T, goal: T) -> list[T]:
     path = [goal]
     current = goal
     while current in paths.keys():
         path.insert(0, paths[current])
         current = paths[current]
+        if current == start:
+            break
     return path
 
 
@@ -59,7 +61,7 @@ def a_star(
     while len(frontier) > 0:
         _, current = heapq.heappop(frontier)
         if current == goal:
-            path = _reconstruct_path(paths, goal)
+            path = _reconstruct_path(paths, start, goal)
             return path, cheapest_path[current]
 
         for neighbor in next_func(current, paths):
