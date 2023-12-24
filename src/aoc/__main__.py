@@ -27,6 +27,7 @@ from aoc import (
     day_22,
     day_23,
     day_24,
+    day_25,
 )
 from aoc.utils import contents
 

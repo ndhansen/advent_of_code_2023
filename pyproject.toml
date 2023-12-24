@@ -8,7 +8,7 @@ version = "1.0.0"
 authors = [{ name = "Nicholas Hansen", email = "ndhansen@leskat.net" }]
 description = "Advent of Code 2023"
 requires-python = ">=3.10"
-dependencies = ["parse", "tqdm"]
+dependencies = ["parse", "tqdm", "modint"]
 
 [project.optional-dependencies]
 dev = [
@@ -25,6 +25,7 @@ dev = [
 [tool.isort]
 known_first_party = ["aoc"]
 skip_gitignore = true
+profile = "black"
 
 [tool.mypy]
 strict = true
